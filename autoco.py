@@ -8,7 +8,7 @@ disks = []
 temp_disk = []
 
 def ddcopy():
-    call(['dd','if='+file,'of='+settings.DD_SAVE_DIR+time.strftime('%S:%H-%d-%m-%Y]',time.gmtime())+'.iso'])
+    call(['dd','if=/dev/disk/by-path/'+file,'of='+settings.DD_SAVE_DIR+time.strftime('%S:%H-%d-%m-%Y]',time.gmtime())+'.iso'])
 
 while True:
     os.chdir('/dev/disk/by-path') #directorio donde buscar los discos y particiones
