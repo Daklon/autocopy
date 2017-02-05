@@ -9,19 +9,14 @@ disks = []
 temp_disks = []
 
 def check_action(file):
-    ##AQUÍ FALTA MUCHO CÓDIGO##
-    actions = {'1':ddcopy,'2':filecopy}
     results = [s for s in re.split(':',file)] #parte la cadena en campos, usa ":" como separador para obtener el puerto del pendrive
     puerto = results.pop(3)
     print(puerto)
     if puerto == '1':
         if not 'part' in file:
-            print('ddcopy')
             ddcopy(file)
     elif puerto == '2':
-        print('Filecopy')
         filecopy(file)
-    print('this is theee eeenndd')
 
 #Realiza la copia de ficheros(usa la partición, no el disco), es mas rápida que el dd pero a costa de copiar menos información
 #Guarda en FC_SAVE_DIR los archivos, en una directorio con el formato especificado en FC_TIME_FORMAT como nombre
@@ -44,13 +39,8 @@ while True:
         temp_disks.append(file)
         if disks.count(file) == 0:
             disks.append(file) #guardo en una lista cada uno de los archivos
-            # check_action(file)
-            print('añadido')
+            check_action(file)
     if len(temp_disks) < len(disks): #compruebo si se ha desenchufado algún disco para eliminarlo de la lista
-        print('if')
         for file in disks:
-            print('bucle')
             if not file in temp_disks:
                 disks.remove(file)
-                print('eliminado')    
-            
