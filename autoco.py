@@ -6,7 +6,7 @@ import time
 import re
 
 disks = []
-temp_disk = []
+temp_disks = []
 
 def check_action(file):
     ##AQUÍ FALTA MUCHO CÓDIGO##
@@ -39,10 +39,18 @@ def ddcopy(file):
 
 while True:
     os.chdir('/dev/disk/by-path') #directorio donde buscar los discos y particiones
+    temp_disks = []
     for file in glob.glob('*[usb]*'): #filtro para solo mostrar los dispositivos usb
-        temp_disk.append(file)
+        temp_disks.append(file)
         if disks.count(file) == 0:
             disks.append(file) #guardo en una lista cada uno de los archivos
-            check_action(file)
-
+            # check_action(file)
+            print('añadido')
+    if len(temp_disks) < len(disks): #compruebo si se ha desenchufado algún disco para eliminarlo de la lista
+        print('if')
+        for file in disks:
+            print('bucle')
+            if not file in temp_disks:
+                disks.remove(file)
+                print('eliminado')    
             
