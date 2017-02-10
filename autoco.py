@@ -36,6 +36,10 @@ def check_action(file):
                 if DEBUG:
                     print ("filecopy by 1.3")
                 filecopy(file)
+        elif puerto == '1.4':
+            if DEBUG:
+                print("Detectado puerto 1.4")
+            plant(file)
     except Exception as e:
         print("[ERROR] " + str(e.message))
     off_led(17)
@@ -44,12 +48,23 @@ def check_action(file):
 #Guarda en FC_SAVE_DIR los archivos, en una directorio con el formato especificado en FC_TIME_FORMAT como nombre
 def filecopy(file):
     on_led(22)
-    call(['umount', file,settings.MOUNT_DIR])
+    call(['umount', settings.MOUNT_DIR])
     call(['mount', file,settings.MOUNT_DIR])
     save_dir = settings.FC_SAVE_DIR+time.strftime(settings.FC_TIME_FORMAT,time.gmtime())
-    call(['mkdir',save_dir])
-    call(['cp','-R',settings.MOUNT_DIR,save_dir])
+    call(['mkdir', save_dir])
+    call(['cp','-R', settings.MOUNT_DIR,save_dir])
+    call(['umount', settings.MOUNT_DIR])
     off_led(22)
+
+#Copia de un dir especificado en PLANT_LOAD_DIR a el disco enchufado en la ruta PLANT_SAVE_DIR respecto de la raiz del disco, luego lo borra, para dejar pruebas forenses
+def plant(file):
+    on_led(22)
+    call(['umount', settings.MOUNT_DIR])
+    call(['mount', file,settings.MOUNT_DIR])
+    call(['mkdir', settings.MOUNT_DIR+settings.PLANT_SAVE_DIR])
+    call(['cp -R', settings.PLANT_LOAD_DIR, settings.MOUNT_DIR+settings.PLANT_SAVE_DIR])
+    call(['rm -R', settings.MOUNT_DIR+settings.PLANT_SAVE_DIR])
+    call(['umount', settings.MOUNT_DIR])
 
 #Realiza la copia binaria del disco entero, es mas lenta pero copia toda la información incluso la borrada y no sobreescrita
 #Guarda en DD_SAVE_DIR la copia binaria en formato iso con el formato especificado en DD_TIME_FORMAT como nombre

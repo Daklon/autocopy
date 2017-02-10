@@ -5,3 +5,5 @@ FC_SAVE_DIR = '/home/pi/'
 FC_TIME_FORMAT = '%S:%H-%d-%m-%Y'
 POP_INDEX = 1
 DEBUG = 0
+PLANT_LOAD_DIR = '/home/pi/pruebas/'
+PLANT_SAVE_DIR = '/'
