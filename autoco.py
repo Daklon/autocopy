@@ -21,26 +21,26 @@ def check_action(file):
 # parte la cadena en campos
 # usa ":" como separador para obtener el puerto del pendrive
     results = [s for s in re.split(':', file)]
-    if DEBUG:
+    if settings.DEBUG:
         print("comprobando dispositivos: " + str(results))
     try:
-        puerto = results.pop(POP_INDEX)
+        puerto = results.pop(settings.POP_INDEX)
         if puerto == '1.2':
-            if DEBUG:
+            if settings.DEBUG:
                 print("Detectado puerto 1.2")
             if not 'part' in file:
-                if DEBUG:
+                if settings.DEBUG:
                     print("ddcopy by 1.2")
                 ddcopy(file)
         elif puerto == '1.3':
-            if DEBUG:
+            if settings.DEBUG:
                 print("Detectado 1.3")
             if 'part' in file:
-                if DEBUG:
+                if settings.DEBUG:
                     print("filecopy by 1.3")
                 filecopy(file)
         elif puerto == '1.4':
-            if DEBUG:
+            if settings.DEBUG:
                 print("Detectado puerto 1.4")
             plant(file)
     except Exception as e:
@@ -63,7 +63,9 @@ def filecopy(file):
     call(['umount', settings.MOUNT_DIR])
     off_led(22)
 
-# Copia de un dir especificado en PLANT_LOAD_DIR a el disco enchufado en la ruta PLANT_SAVE_DIR respecto de la raiz del disco, luego lo borra, para dejar pruebas forenses
+# Copia de un dir especificado en PLANT_LOAD_DIR a el disco enchufado
+# en la ruta PLANT_SAVE_DIR respecto de la raiz del disco,
+# luego lo borra, para dejar pruebas forenses
 
 
 def plant(file):
@@ -75,14 +77,16 @@ def plant(file):
     call(['rm -R', settings.MOUNT_DIR+settings.PLANT_SAVE_DIR])
     call(['umount', settings.MOUNT_DIR])
 
-# Realiza la copia binaria del disco entero, es mas lenta pero copia toda la información incluso la borrada y no sobreescrita
-# Guarda en DD_SAVE_DIR la copia binaria en formato iso con el formato especificado en DD_TIME_FORMAT como nombre
+# Realiza la copia binaria del disco entero, es mas lenta pero copia toda la
+# información incluso la borrada y no sobreescrita
+# Guarda en DD_SAVE_DIR la copia binaria en formato iso con el formato 
+# especificado en DD_TIME_FORMAT como nombre
 
 
 def ddcopy(file):
     on_led(22)
-    command = 'dd if=/dev/disk/by-path/' + file + ' of=' + settings.DD_SAVE_DIR + time.strftime(DD_TIME_FORMAT, time.gmtime()) + '.iso'
-    if DEBUG:
+    command = 'dd if=/dev/disk/by-path/' + file + ' of=' + settings.DD_SAVE_DIR + time.strftime(settings.D_TIME_FORMAT, time.gmtime()) + '.iso'
+    if settings.DEBUG:
         print("command:" + command)
     call(command.split(" "))
     off_led(22)
@@ -93,7 +97,7 @@ def main():
     temp_disks = []
 
     # LED CONFIG
-    if DEBUG:
+    if settings.DEBUG:
         print("Configuración de leds")
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
@@ -109,7 +113,7 @@ def main():
     off_led(23)
     off_led(24)
 
-    if DEBUG:
+    if settings.DEBUG:
         print("Iniciando autoco.py")
 
     while True:
@@ -120,11 +124,13 @@ def main():
         for file in glob.glob('*[usb]*'):
             temp_disks.append(file)
             if disks.count(file) == 0:
-                if DEBUG:
+                if settings.DEBUG:
                     print("Procesando:" + str(file))
-                disks.append(file)  # Guardo en una lista cada uno de los archivos
+        # Guardo en una lista cada uno de los archivos
+                disks.append(file)
                 check_action(file)
-        # Compruebo si se ha desenchufado algún disco para eliminarlo de la lista
+        # Compruebo si se ha desenchufado algún disco
+        # para eliminarlo de la lista
         if len(temp_disks) < len(disks):
             for file in disks:
                 if not file in temp_disks:
